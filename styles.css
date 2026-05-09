@@ -5,7 +5,7 @@
    Palette: crisp white · near-black · Zurich #000068 · #4066B3
 ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 :root {
   /* Core palette */
@@ -29,8 +29,9 @@
   --up:         #22c55e;
 
   /* Type */
-  --font-display: 'Syne', 'Helvetica Neue', sans-serif;
-  --font-body:    'Outfit', 'Helvetica Neue', sans-serif;
+  --font-display: 'Manrope', 'Helvetica Neue', sans-serif;
+  --font-body:    'Manrope', 'Helvetica Neue', sans-serif;
+  --font-serif:   'Instrument Serif', 'Times New Roman', serif;
   --font-mono:    'JetBrains Mono', 'SFMono-Regular', Menlo, monospace;
 
   /* Layout */
@@ -345,15 +346,17 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 
 /* Name */
 .hero__name {
-  font-family: var(--font-display);
-  font-size: clamp(3rem, 6.5vw, 6rem);
-  font-weight: 800;
-  line-height: 0.88;
-  letter-spacing: -0.04em;
-  text-transform: uppercase;
+  font-family: var(--font-serif);
+  font-size: clamp(3.5rem, 7.5vw, 6.5rem);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.025em;
+  text-transform: none;
   color: var(--ink);
   margin-bottom: 28px;
 }
+.hero__name em,
+.hero__name i { font-style: italic; font-weight: 400; }
 
 /* Data rows */
 .hero__data-rows {
@@ -400,7 +403,8 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 10px 18px;
+  padding: 14px 20px;
+  min-height: 44px;
   font-family: var(--font-mono);
   font-size: 0.68rem;
   font-weight: 600;
