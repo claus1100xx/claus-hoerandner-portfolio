@@ -21,9 +21,9 @@ window.I18N = {
 
     'hero-eyebrow': 'Finance Transformation Lead · Zurich North America',
     'hero-lede': 'Leading <strong>enterprise-wide finance modernization</strong> at Zurich North America — modern reporting, AI adoption, IFRS 17, and automation across all finance departments.',
-    'hero-btn-resume': '↓ Download résumé',
-    'hero-btn-contact': 'Get in touch →',
-    'hero-btn-linkedin': 'LinkedIn ↗',
+    'hero-btn-resume': 'Download résumé',
+    'hero-btn-contact': 'Get in touch',
+    'hero-btn-linkedin': 'LinkedIn',
 
     'hero-fact-1-label': 'Years in insurance finance',
     'hero-fact-2-label': 'Professionals trained',
@@ -89,6 +89,9 @@ window.I18N = {
     'role-ba': 'Benefit Analyst',
     'ba-b1': 'Developed and consulted on benefit budgets including employee and employer contributions.',
     'ba-b2': 'Produced reports detailing possible financial exposure for senior management.',
+
+    'role-ss': 'Sales Specialist',
+    'ss-b1': 'Client-facing role in a high-end jewellery environment; collaborated with the on-site jeweller on specialised customer needs.',
 
     'role-fap': 'Financial Analyst / Planner',
     'fap-b1': 'Defined and oversaw the planning process for Zurich North America — built templates, verified inputs, and reconciled across BUs.',
@@ -234,9 +237,9 @@ window.I18N = {
 
     'hero-eyebrow': 'Leiter Finanztransformation · Zurich North America',
     'hero-lede': 'Leitet die <strong>unternehmensweite Finanzmodernisierung</strong> bei Zurich North America — modernes Berichtswesen, KI-Einführung, IFRS 17 und Automatisierung in allen Finanzabteilungen.',
-    'hero-btn-resume': '↓ Lebenslauf herunterladen',
-    'hero-btn-contact': 'Kontakt aufnehmen →',
-    'hero-btn-linkedin': 'LinkedIn ↗',
+    'hero-btn-resume': 'Lebenslauf herunterladen',
+    'hero-btn-contact': 'Kontakt aufnehmen',
+    'hero-btn-linkedin': 'LinkedIn',
 
     'hero-fact-1-label': 'Jahre in der Versicherungsfinanz',
     'hero-fact-2-label': 'Fachleute geschult',
@@ -302,6 +305,9 @@ window.I18N = {
     'role-ba': 'Leistungsanalyst',
     'ba-b1': 'Entwickelte und beriet zu Leistungsbudgets einschließlich Arbeitnehmer- und Arbeitgeberbeiträgen.',
     'ba-b2': 'Erstellte Berichte zu möglichen finanziellen Risiken für das Senior Management.',
+
+    'role-ss': 'Vertriebsspezialist',
+    'ss-b1': 'Kundenorientierte Rolle in einem gehobenen Schmuckumfeld; Zusammenarbeit mit dem Juwelier vor Ort für spezifische Kundenbedürfnisse.',
 
     'role-fap': 'Finanzanalyst / Planer',
     'fap-b1': 'Definierte und überwachte den Planungsprozess für Zurich North America — Vorlagen erstellt, Eingaben verifiziert, Abstimmung über Geschäftsbereiche.',
