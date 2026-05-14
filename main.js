@@ -50,15 +50,13 @@
   }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
   document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
 
-  /* 4 — STAT counters (hero facts) — preserves <sup>+ */
+  /* 4 — STAT counters (hero facts) */
   const countObs = new IntersectionObserver((entries) => {
     entries.forEach(e => {
       if (!e.isIntersecting) return;
       const el = e.target;
       const target = parseInt(el.dataset.target, 10);
       const suffix = el.dataset.suffix || '';
-      const hasSup = !!el.querySelector('sup');
-      const supHTML = hasSup ? '<sup>+</sup>' : '';
       const steps = 48;
       const dur = 1400;
       let count = 0;
@@ -66,7 +64,7 @@
       const timer = setInterval(() => {
         count++;
         const val = Math.min(Math.round(count * inc), target);
-        el.innerHTML = val.toLocaleString() + suffix + supHTML;
+        el.textContent = val.toLocaleString() + suffix;
         if (count >= steps) clearInterval(timer);
       }, dur / steps);
       countObs.unobserve(el);
@@ -76,7 +74,7 @@
 
   /* 5 — LANGUAGE toggle */
   const T = window.I18N || {};
-  let lang = localStorage.getItem('lang') || 'en';
+  let lang = 'en';
 
   function applyLang(l) {
     document.documentElement.lang = l;
@@ -93,17 +91,8 @@
 
   const langBtn = document.getElementById('langToggle');
   if (langBtn) {
-    // Apply persisted lang on load
-    if (lang === 'de') {
-      langBtn.querySelectorAll('.lang-toggle__opt').forEach(o => {
-        o.classList.toggle('lang-toggle__opt--active', o.dataset.l === lang);
-      });
-      applyLang(lang);
-    }
-
     langBtn.addEventListener('click', () => {
       lang = lang === 'en' ? 'de' : 'en';
-      localStorage.setItem('lang', lang);
       langBtn.querySelectorAll('.lang-toggle__opt').forEach(o => {
         o.classList.toggle('lang-toggle__opt--active', o.dataset.l === lang);
       });
