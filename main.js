@@ -1,102 +1,21 @@
-/* ============================================================
-   CLAUS HOERANDNER — SITE SCRIPT
-============================================================ */
-(function () {
-  'use strict';
-
-  /* 1 — NAVBAR scroll + hamburger */
-  const nav = document.getElementById('nav');
-  const menuBtn = document.querySelector('.nav__menu-btn');
-
-  window.addEventListener('scroll', () => {
-    nav.classList.toggle('nav--scrolled', window.scrollY > 40);
-  }, { passive: true });
-
-  if (menuBtn) {
-    menuBtn.addEventListener('click', () => {
-      const open = nav.classList.toggle('nav--open');
-      menuBtn.setAttribute('aria-expanded', String(open));
+(() => {
+  const translatable = Array.from(document.querySelectorAll('[data-de]'));
+  translatable.forEach(el => { el.dataset.en = el.innerHTML; });
+  const buttons = document.querySelectorAll('.language-toggle');
+  function setLanguage(language) {
+    const lang = language === 'de' ? 'de' : 'en';
+    document.documentElement.lang = lang;
+    translatable.forEach(el => { el.innerHTML = el.dataset[lang]; });
+    buttons.forEach(button => {
+      button.textContent = lang === 'en' ? 'DE' : 'EN';
+      button.setAttribute('aria-label', lang === 'en' ? 'Switch to German' : 'Switch to English');
     });
-    document.querySelectorAll('.nav__links a').forEach(a => {
-      a.addEventListener('click', () => {
-        nav.classList.remove('nav--open');
-        menuBtn.setAttribute('aria-expanded', 'false');
-      });
-    });
+    if (document.body.dataset.titleDe) document.title = lang === 'de' ? document.body.dataset.titleDe : document.body.dataset.titleEn;
+    try { localStorage.setItem('portfolio-language', lang); } catch (_) {}
+    document.dispatchEvent(new CustomEvent('languagechange', { detail: { language: lang } }));
   }
-
-  /* 2 — ACTIVE section link */
-  const sections = document.querySelectorAll('section[id], footer[id]');
-  const navLinks = document.querySelectorAll('.nav__links a');
-  const sectionObs = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        navLinks.forEach(l => l.classList.remove('active'));
-        const match = document.querySelector(`.nav__links a[href="#${e.target.id}"]`);
-        if (match) match.classList.add('active');
-      }
-    });
-  }, { threshold: 0.25, rootMargin: '-80px 0px -40% 0px' });
-  sections.forEach(s => sectionObs.observe(s));
-
-  /* 3 — REVEAL on scroll */
-  const revealObs = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('revealed');
-        revealObs.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
-  document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
-
-  /* 4 — STAT counters (hero facts) */
-  const countObs = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (!e.isIntersecting) return;
-      const el = e.target;
-      const target = parseInt(el.dataset.target, 10);
-      const suffix = el.dataset.suffix || '';
-      const steps = 48;
-      const dur = 1400;
-      let count = 0;
-      const inc = target / steps;
-      const timer = setInterval(() => {
-        count++;
-        const val = Math.min(Math.round(count * inc), target);
-        el.textContent = val.toLocaleString() + suffix;
-        if (count >= steps) clearInterval(timer);
-      }, dur / steps);
-      countObs.unobserve(el);
-    });
-  }, { threshold: 0.4 });
-  document.querySelectorAll('[data-target]').forEach(el => countObs.observe(el));
-
-  /* 5 — LANGUAGE toggle */
-  const T = window.I18N || {};
-  let lang = 'en';
-
-  function applyLang(l) {
-    document.documentElement.lang = l;
-    const dict = T[l]; if (!dict) return;
-    document.querySelectorAll('[data-i18n]').forEach(el => {
-      const k = el.dataset.i18n;
-      if (dict[k] !== undefined) el.textContent = dict[k];
-    });
-    document.querySelectorAll('[data-i18n-html]').forEach(el => {
-      const k = el.dataset.i18nHtml;
-      if (dict[k] !== undefined) el.innerHTML = dict[k];
-    });
-  }
-
-  const langBtn = document.getElementById('langToggle');
-  if (langBtn) {
-    langBtn.addEventListener('click', () => {
-      lang = lang === 'en' ? 'de' : 'en';
-      langBtn.querySelectorAll('.lang-toggle__opt').forEach(o => {
-        o.classList.toggle('lang-toggle__opt--active', o.dataset.l === lang);
-      });
-      applyLang(lang);
-    });
-  }
+  buttons.forEach(button => button.addEventListener('click', () => setLanguage(document.documentElement.lang === 'en' ? 'de' : 'en')));
+  let initial = 'en';
+  try { initial = localStorage.getItem('portfolio-language') || 'en'; } catch (_) {}
+  setLanguage(initial);
 })();
