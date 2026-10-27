@@ -7,7 +7,12 @@
     document.documentElement.lang = lang;
     translatable.forEach(el => { el.innerHTML = el.dataset[lang]; });
     buttons.forEach(button => {
-      button.textContent = lang === 'en' ? 'DE' : 'EN';
+      const flag = document.createElement('img');
+      flag.src = lang === 'en' ? 'logos/flag-de.svg' : 'logos/flag-us.svg';
+      flag.alt = ''; flag.width = 18; flag.height = 12;
+      const label = document.createElement('span');
+      label.textContent = lang === 'en' ? 'DE' : 'EN';
+      button.replaceChildren(flag, label);
       button.setAttribute('aria-label', lang === 'en' ? 'Switch to German' : 'Switch to English');
     });
     if (document.body.dataset.titleDe) document.title = lang === 'de' ? document.body.dataset.titleDe : document.body.dataset.titleEn;
