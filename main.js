@@ -18,4 +18,16 @@
   let initial = 'en';
   try { initial = localStorage.getItem('portfolio-language') || 'en'; } catch (_) {}
   setLanguage(initial);
+  const resumeLink = document.querySelector('[data-resume-download]');
+  const resumeStatus = document.getElementById('resume-download-status');
+  if (resumeLink && resumeStatus) {
+    let requested = false;
+    function downloadMessage() {
+      if (requested) resumeStatus.textContent = document.documentElement.lang === 'de'
+        ? 'Word-Download angefordert. Die Datei finden Sie im Downloads-Ordner.'
+        : 'Word résumé download requested. Check your Downloads folder.';
+    }
+    resumeLink.addEventListener('click', () => { requested = true; downloadMessage(); });
+    document.addEventListener('languagechange', downloadMessage);
+  }
 })();

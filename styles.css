@@ -18,3 +18,8 @@
 @media(max-width:650px){.panel-feature{grid-template-columns:1fr;gap:24px;padding-block:38px 44px}.panel-feature h2{font-size:34px}.panel-caption{flex-direction:column;gap:18px}.speaking-intro{padding-block:40px 32px}.nav-links{gap:12px 20px}}
 
 .credential-line{justify-content:flex-start;gap:18px;align-items:flex-start}.credential-mark{width:48px;height:48px;object-fit:contain;flex-shrink:0}.credential-line>div{flex:1;min-width:0}.credential-line .year{margin-left:auto}@media(max-width:420px){.credential-line{gap:12px}.credential-mark{width:40px;height:40px}}
+
+/* Keep credential logos out of the text and date columns. */
+.credential-list{min-width:0}.credential-line{display:grid;grid-template-columns:48px minmax(0,1fr);gap:18px;align-items:start;padding-bottom:28px}.credential-line>div{min-width:0}.credential-line .credential-title{font:600 15px/1.5 var(--body);letter-spacing:0;margin:0 0 4px}.credential-line p{font-size:14px;line-height:1.65;margin:0}.credential-line .credential-date{font-size:12px;margin-top:6px}.credential-line .credential-honors{font-size:13px;margin-top:4px}.credential-line .credential-mark{width:48px;height:48px}.resume-download{display:flex;align-items:center;flex-wrap:wrap;gap:12px 18px;margin-top:26px}.resume-file-detail{font-size:12px;color:var(--muted)}.contact-layout .download-status{font-size:13px;margin:12px 0 0;min-height:1.65em}
+@media(max-width:900px){.credentials{grid-template-columns:1fr;gap:30px}.credential-list{max-width:680px}}
+@media(max-width:420px){.credential-line{grid-template-columns:40px minmax(0,1fr);gap:14px}.credential-line .credential-mark{width:40px;height:40px}}
