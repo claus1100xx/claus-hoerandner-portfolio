@@ -18,6 +18,35 @@
   let initial = 'en';
   try { initial = localStorage.getItem('portfolio-language') || 'en'; } catch (_) {}
   setLanguage(initial);
+  const portrait = document.getElementById('portrait-card');
+  if (portrait) {
+    const front = portrait.querySelector('.portrait-front');
+    const back = portrait.querySelector('.portrait-back');
+    const returnButton = portrait.querySelector('.portrait-return');
+    function updatePortraitLabel() {
+      front.setAttribute('aria-label', document.documentElement.lang === 'de'
+        ? 'Kontaktdaten von Claus Hoerandner anzeigen'
+        : 'Show Claus Hoerandner’s contact details');
+    }
+    function flipPortrait(showContact) {
+      portrait.classList.toggle('is-flipped', showContact);
+      front.setAttribute('aria-expanded', String(showContact));
+      front.setAttribute('aria-hidden', String(showContact));
+      back.setAttribute('aria-hidden', String(!showContact));
+      front.inert = showContact;
+      back.inert = !showContact;
+      (showContact ? back.querySelector('h2') : front).focus({ preventScroll: true });
+    }
+    front.addEventListener('click', () => flipPortrait(true));
+    returnButton.addEventListener('click', () => flipPortrait(false));
+    portrait.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && portrait.classList.contains('is-flipped')) {
+        event.preventDefault(); flipPortrait(false);
+      }
+    });
+    document.addEventListener('languagechange', updatePortraitLabel);
+    updatePortraitLabel();
+  }
   const resumeLink = document.querySelector('[data-resume-download]');
   const resumeStatus = document.getElementById('resume-download-status');
   if (resumeLink && resumeStatus) {
