@@ -14,7 +14,7 @@ Commit the regenerated HTML and contact card along with the configuration. Canon
 
 ## Résumé download
 
-The hero and contact buttons download the existing `Claus_Hoerandner_Resume.docx` from the repository root. Every page opens in English; visitors can switch to German with the language button.
+The hero and contact buttons use GitHub’s direct raw-file route to download the existing `Claus_Hoerandner_Resume.docx` from the repository root. Every page opens in English; visitors can switch to German with the language button.
 
 ## Content privacy
 
