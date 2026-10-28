@@ -51,3 +51,5 @@
 @media(max-width:360px){.portrait-vcard,.portrait-card-actions .portrait-return{padding:7px 9px;min-height:36px}.portrait-card-actions{gap:7px}}
 
 .language-toggle{display:inline-flex;align-items:center;justify-content:center;gap:7px;white-space:nowrap}.language-toggle img{display:block;width:18px;height:12px;object-fit:cover;border-radius:1px;box-shadow:0 0 0 1px #d6dfe2;flex-shrink:0}
+
+.hero{row-gap:30px}.hero-stats{grid-column:1/-1;width:100%;border-top:1px solid var(--line);padding-top:24px}.career-entry .career-tenure{font-size:12px;line-height:1.6;color:var(--muted);margin-top:8px}

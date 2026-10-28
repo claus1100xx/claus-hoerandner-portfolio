@@ -52,16 +52,16 @@
     document.addEventListener('languagechange', updatePortraitLabel);
     updatePortraitLabel();
   }
-  const resumeLink = document.querySelector('[data-resume-download]');
+  const resumeLinks = document.querySelectorAll('[data-resume-download]');
   const resumeStatus = document.getElementById('resume-download-status');
-  if (resumeLink && resumeStatus) {
+  if (resumeLinks.length && resumeStatus) {
     let requested = false;
     function downloadMessage() {
       if (requested) resumeStatus.textContent = document.documentElement.lang === 'de'
-        ? 'Word-Download angefordert. Die Datei finden Sie im Downloads-Ordner.'
-        : 'Word résumé download requested. Check your Downloads folder.';
+        ? 'PDF-Download angefordert. Die Datei finden Sie im Downloads-Ordner.'
+        : 'PDF download requested. Check your Downloads folder.';
     }
-    resumeLink.addEventListener('click', () => { requested = true; downloadMessage(); });
+    resumeLinks.forEach(link => link.addEventListener('click', () => { requested = true; downloadMessage(); }));
     document.addEventListener('languagechange', downloadMessage);
   }
 })();
