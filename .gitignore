@@ -1,3 +1,6 @@
 design_handoff_portfolio_site/index-v1.html
 .DS_Store
 Thumbs.db
+
+# Never publish confidential performance evaluations
+**/MyPerformance*.pdf
