@@ -16,13 +16,11 @@
       button.setAttribute('aria-label', lang === 'en' ? 'Switch to German' : 'Switch to English');
     });
     if (document.body.dataset.titleDe) document.title = lang === 'de' ? document.body.dataset.titleDe : document.body.dataset.titleEn;
-    try { localStorage.setItem('portfolio-language', lang); } catch (_) {}
     document.dispatchEvent(new CustomEvent('languagechange', { detail: { language: lang } }));
   }
   buttons.forEach(button => button.addEventListener('click', () => setLanguage(document.documentElement.lang === 'en' ? 'de' : 'en')));
-  let initial = 'en';
-  try { initial = localStorage.getItem('portfolio-language') || 'en'; } catch (_) {}
-  setLanguage(initial);
+  // Each page opens in English; the language button remains available.
+  setLanguage('en');
   const portrait = document.getElementById('portrait-card');
   if (portrait) {
     const front = portrait.querySelector('.portrait-front');
@@ -58,8 +56,8 @@
     let requested = false;
     function downloadMessage() {
       if (requested) resumeStatus.textContent = document.documentElement.lang === 'de'
-        ? 'PDF-Download angefordert. Die Datei finden Sie im Downloads-Ordner.'
-        : 'PDF download requested. Check your Downloads folder.';
+        ? 'Word-Download angefordert. Die Datei finden Sie im Downloads-Ordner.'
+        : 'Word résumé download requested. Check your Downloads folder.';
     }
     resumeLinks.forEach(link => link.addEventListener('click', () => { requested = true; downloadMessage(); }));
     document.addEventListener('languagechange', downloadMessage);

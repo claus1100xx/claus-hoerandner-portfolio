@@ -144,15 +144,7 @@
     $('close-brief-text').textContent = done === tasks.length
       ? t('All milestones are complete. The executive pack is published and close evidence is archived.', 'Alle Meilensteine sind abgeschlossen. Der Management-Bericht ist veröffentlicht und die Nachweise sind archiviert.')
       : t(`As of ${wd(state.day)}, ${done} of ${tasks.length} milestones are complete. ${overdue} are overdue, ${due} are due today, and ${blocked} ${blocked===1?'has':'have'} a reported blocker. Select a milestone below to review the next action.`, `Zum ${wd(state.day)} sind ${done} von ${tasks.length} Meilensteinen abgeschlossen. ${overdue} sind überfällig, ${due} heute fällig und ${blocked} als blockiert gemeldet. Wählen Sie einen Meilenstein, um die nächste Aktion zu prüfen.`);
-    const teamRows = Object.keys(teams).map(team => {
-      const total = tasks.filter(task => task.team === team).length;
-      const finished = tasks.filter(task => task.team === team && state.statuses[task.id] === 'done').length;
-      const container = element('div'); const heading = element('div',undefined,'close-team-head');
-      heading.append(element('span',teamName(team)),element('span',`${finished}/${total}`));
-      const track = element('div',undefined,'close-team-track'); track.setAttribute('aria-hidden','true');const bar=element('span');bar.style.width=(finished/total*100)+'%';track.append(bar);container.append(heading,track);return container;
-    });
-    $('close-teams').setAttribute('aria-label',t('Team progress','Fortschritt nach Team'));
-    $('close-teams').replaceChildren(...teamRows);
+    renderAnalytics();
     const visible = filtered(); $('close-list').replaceChildren(...visible.map(task => taskButton(task)));
     $('close-result-count').textContent = t(`${visible.length} of ${tasks.length} shown`,`${visible.length} von ${tasks.length} angezeigt`);
     $('close-empty').hidden = visible.length > 0;
@@ -168,6 +160,95 @@
     $('close-history-list').replaceChildren(...(history.length ? history : [element('p',t('Your saved milestone updates will appear here.','Ihre gespeicherten Meilenstein-Änderungen erscheinen hier.'))]));
     storageNotice();
   }
+  const colors = { done:'#258674', progress:'#3e80ac', waiting:'#8b78a5', blocked:'#b96a3d', todo:'#dce5e8' };
+  function svgNode(name, attrs = {}, text) {
+    const node = document.createElementNS('http://www.w3.org/2000/svg', name);
+    for (const [key,value] of Object.entries(attrs)) node.setAttribute(key,String(value));
+    if(text !== undefined) node.textContent=text;
+    return node;
+  }
+  function readyTasks() {return tasks.filter(task=>task.due<=state.day && state.statuses[task.id]!=='done' && state.statuses[task.id]!=='blocked' && unfinished(task).length===0);}
+  function renderAnalytics() {
+    const counts = Object.fromEntries(Object.keys(labels).map(status=>[status,tasks.filter(task=>effective(task)===status).length]));
+    const done=counts.done, percent=Math.round(done/tasks.length*100);
+    const days=Array.from({length:12},(_,i)=>i+1);
+    const plan=days.map(day=>tasks.filter(task=>task.due<=day).length);
+    const completed=days.map(day=>tasks.filter(task=>task.due<=day && state.statuses[task.id]==='done').length);
+    const selectedPlan=plan[state.day-1], selectedDone=completed[state.day-1];
+    $('close-chart-day').textContent=wd(state.day);
+    $('close-day-range').value=state.day;
+    $('close-range-value').textContent=wd(state.day);
+    $('close-day-range').setAttribute('aria-valuetext',wd(state.day));
+    const compact=matchMedia('(max-width:520px)').matches;
+    const w=compact?320:680,h=compact?240:270,left=compact?28:40,right=compact?12:22,top=20,bottom=38;
+    const ready=readyTasks();$('close-ready').disabled=ready.length===0;
+    $('close-ready').setAttribute('aria-label',t(`Complete ${ready.length} ready milestones due through ${wd(state.day)}`,`${ready.length} bereite Meilensteine bis ${wd(state.day)} abschließen`));
+    const x=day=>left+(day-1)*(w-left-right)/11;
+    const y=count=>h-bottom-count/tasks.length*(h-top-bottom);
+    const svg=svgNode('svg',{viewBox:`0 0 ${w} ${h}`,role:'img','aria-labelledby':'close-curve-svg-title close-curve-svg-desc'});
+    svg.append(svgNode('title',{id:'close-curve-svg-title'},t('Cumulative milestones by scheduled due day','Kumulierte Meilensteine nach geplantem Fälligkeitstag')));
+    svg.append(svgNode('desc',{id:'close-curve-svg-desc'},t(`Working day ${state.day}: ${selectedPlan} milestones scheduled, ${selectedDone} of those complete. See the data table below for all days.`,`Arbeitstag ${state.day}: ${selectedPlan} Meilensteine geplant, davon ${selectedDone} abgeschlossen. Alle Tage stehen in der Datentabelle unten.`)));
+    svg.append(svgNode('rect',{x:left,y:top,width:x(state.day)-left,height:h-top-bottom,fill:'#f0f7f6'}));
+    for(let n=0;n<=tasks.length;n+=6){svg.append(svgNode('line',{x1:left,y1:y(n),x2:w-right,y2:y(n),stroke:'#e3ebed'}),svgNode('text',{x:left-10,y:y(n)+4,'text-anchor':'end',class:'close-axis'},n));}
+    for(const day of days.filter(day=>!compact || day===1 || day%2===0))svg.append(svgNode('text',{x:x(day),y:h-14,'text-anchor':'middle',class:'close-axis'},day));
+    const line=values=>values.map((value,i)=>`${i?'L':'M'} ${x(i+1)} ${y(value)}`).join(' ');
+    svg.append(svgNode('path',{d:`${line(completed)} L ${x(12)} ${y(0)} L ${x(1)} ${y(0)} Z`,fill:'#258674',opacity:'.09'}));
+    svg.append(svgNode('path',{d:line(plan),fill:'none',stroke:'#8aa2ac','stroke-width':2,'stroke-dasharray':'6 5','stroke-linejoin':'round'}));
+    svg.append(svgNode('path',{d:line(completed),fill:'none',stroke:colors.done,'stroke-width':3,'stroke-linejoin':'round','stroke-linecap':'round'}));
+    svg.append(svgNode('line',{x1:x(state.day),x2:x(state.day),y1:top,y2:y(0),stroke:'#173c4b','stroke-dasharray':'3 4',opacity:'.55'}));
+    for(const [values,color] of [[plan,'#8aa2ac'],[completed,colors.done]]){
+      const circle=svgNode('circle',{cx:x(state.day),cy:y(values[state.day-1]),r:5,fill:color,stroke:'white','stroke-width':2});
+      svg.append(circle);
+    }
+    $('close-curve').replaceChildren(svg);
+    const readout=$('close-curve-readout');readout.replaceChildren();
+    for(const [value,label] of [[selectedPlan,t('scheduled through this day','bis zu diesem Tag geplant')],[selectedDone,t('of those complete','davon abgeschlossen')],[selectedPlan-selectedDone,t('still open','noch offen')]]){
+      const item=element('div');item.append(element('strong',String(value)),element('span',label));readout.append(item);
+    }
+    const table=element('table'),caption=element('caption',t('Cumulative counts by scheduled working day','Kumulierte Anzahl nach geplantem Arbeitstag'));
+    const head=element('thead'),headRow=element('tr');
+    for(const label of [t('Working day','Arbeitstag'),t('Scheduled','Geplant'),t('Complete','Abgeschlossen')]){const th=element('th',label);th.scope='col';headRow.append(th);}
+    head.append(headRow);const body=element('tbody');
+    days.forEach((day,i)=>{const row=element('tr');row.append(element('th',wd(day)),element('td',String(plan[i])),element('td',String(completed[i])));body.append(row);});
+    table.append(caption,head,body);$('close-curve-table').replaceChildren(table);
+    const ring=svgNode('svg',{viewBox:'0 0 200 200','aria-hidden':'true'});let offset=0;
+    for(const status of ['done','progress','waiting','blocked','todo']){
+      const fraction=counts[status]/tasks.length*100;
+      if(fraction){ring.append(svgNode('circle',{cx:100,cy:100,r:80,fill:'none',stroke:colors[status],'stroke-width':15,pathLength:100,'stroke-dasharray':`${fraction} ${100-fraction}`,'stroke-dashoffset':-offset,transform:'rotate(-90 100 100)'}));offset+=fraction;}
+    }
+    $('close-donut').replaceChildren(ring);$('close-ring-percent').textContent=percent+'%';
+    $('close-status-legend').replaceChildren(...['done','progress','waiting','blocked','todo'].map(status=>{
+      const button=element('button',undefined,'close-status-filter');button.type='button';button.dataset.chartStatus=status;
+      button.setAttribute('aria-pressed',String($('close-status').value===status));
+      const dot=element('i');dot.style.background=colors[status];button.append(dot,element('span',statusName(status)),element('strong',String(counts[status])));return button;
+    }));
+    $('close-teams').replaceChildren(...Object.keys(teams).map(team=>{
+      const group=tasks.filter(task=>task.team===team),finished=group.filter(task=>state.statuses[task.id]==='done').length;
+      const scheduled=group.filter(task=>task.due<=state.day).length;
+      const button=element('button',undefined,'close-team-chart');button.type='button';button.dataset.chartTeam=team;
+      button.setAttribute('aria-pressed',String($('close-team').value===team));
+      button.setAttribute('aria-label',t(`${teamName(team)}: ${finished} of ${group.length} complete, ${scheduled} scheduled through ${wd(state.day)}. Filter this team.`,`${teamName(team)}: ${finished} von ${group.length} abgeschlossen, ${scheduled} bis ${wd(state.day)} geplant. Dieses Team filtern.`));
+      const heading=element('div',undefined,'close-team-head');heading.append(element('span',teamName(team)),element('span',`${finished}/${group.length}`));
+      const track=element('div',undefined,'close-team-track');track.setAttribute('aria-hidden','true');
+      const bar=element('span');bar.style.width=(finished/group.length*100)+'%';
+      const marker=element('i',undefined,'close-team-target');marker.style.left=(scheduled/group.length*100)+'%';track.append(bar,marker);button.append(heading,track);return button;
+    }));
+    $('close-teams').setAttribute('aria-label',t('Team progress','Fortschritt nach Team'));
+    document.querySelector('.close-analytics').setAttribute('aria-label',t('Close analytics','Abschlussanalysen'));
+  }
+  function focusMilestones() {$('close-list-heading').tabIndex=-1;$('close-list-heading').focus({preventScroll:true});$('close-list-heading').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'});}
+  $('close-status-legend').addEventListener('click',event=>{const button=event.target.closest('[data-chart-status]');if(button){$('close-status').value=$('close-status').value===button.dataset.chartStatus?'all':button.dataset.chartStatus;render();focusMilestones();}});
+  $('close-teams').addEventListener('click',event=>{const button=event.target.closest('[data-chart-team]');if(button){$('close-team').value=$('close-team').value===button.dataset.chartTeam?'all':button.dataset.chartTeam;render();focusMilestones();}});
+  $('close-day-range').addEventListener('input',()=>{state.day=Number($('close-day-range').value);$('close-day').value=state.day;save();render();});
+  matchMedia('(max-width:520px)').addEventListener('change',renderAnalytics);
+  $('close-ready').addEventListener('click',()=>{
+    const ready=readyTasks();
+    if(!ready.length)return;
+    const time=Date.now();
+    for(const task of ready){const before=state.statuses[task.id];state.statuses[task.id]='done';state.history.unshift({id:task.id,before,after:'done',time});}
+    state.history=state.history.slice(0,6);save();render();
+    $('close-announcement').textContent=t(`${ready.length} ready milestones completed. Progress charts updated.`,`${ready.length} bereite Meilensteine abgeschlossen. Fortschrittsdiagramme aktualisiert.`);
+  });
   function populateTeams() {
     const current = $('close-team').value || 'all';
     const all = element('option',t('All teams','Alle Teams'));all.value='all';

@@ -12,9 +12,9 @@ python tools/update_site_urls.py
 
 Commit the regenerated HTML and contact card along with the configuration. Canonical and Open Graph tags remain static so they work without JavaScript. Configure a future custom domain in GitHub Pages separately.
 
-## Resume PDF
+## Résumé download
 
-Upload `Claus_Hoerandner_Resume.pdf` to the repository root. The hero and contact buttons point to that filename. The Word originals are retained as editable source documents.
+The hero and contact buttons download the existing `Claus_Hoerandner_Resume.docx` from the repository root. Every page opens in English; visitors can switch to German with the language button.
 
 ## Content privacy
 
