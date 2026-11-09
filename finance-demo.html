@@ -6,8 +6,8 @@
 <meta name="description" content="Explore a conversational finance agent demo. Ask about performance, investigate budget variances, and inspect the fictional data behind each answer.">
 <link rel="canonical" href="https://claus1100xx.github.io/claus-hoerandner-portfolio/finance-demo.html"><link rel="icon" href="favicon.svg" type="image/svg+xml"><meta name="theme-color" content="#173c4b">
 <meta property="og:title" content="Talk to your financial data — Interactive demo"><meta property="og:description" content="Ask a financial question. Get a calculated answer, a chart, and the supporting data. A portfolio demo with fictional data."><meta property="og:type" content="website"><meta property="og:url" content="https://claus1100xx.github.io/claus-hoerandner-portfolio/finance-demo.html"><meta property="og:image" content="https://claus1100xx.github.io/claus-hoerandner-portfolio/Headshot2.jpg">
-<link rel="stylesheet" href="styles.css?v=20261108-flags"><link rel="stylesheet" href="finance-demo.css?v=20261108">
-<script src="main.js?v=20261108-diagonal-flags" defer></script><script src="finance-demo-data.js?v=20261108" defer></script><script src="finance-demo-engine.js?v=20261108" defer></script><script src="finance-demo.js?v=20261108" defer></script>
+<link rel="stylesheet" href="styles.css?v=20261108-flags"><link rel="stylesheet" href="finance-demo.css?v=guided-1">
+<script src="main.js?v=20261108-diagonal-flags" defer></script><script src="finance-demo-data.js?v=20261108" defer></script><script src="finance-demo-engine.js?v=guided-1" defer></script><script src="finance-demo.js?v=guided-1" defer></script>
 </head>
 <body class="finance-page" data-title-en="Talk to your financial data — Claus Hoerandner" data-title-de="Mit Finanzdaten sprechen — Claus Hoerandner">
 <a class="skip-link" href="#main" data-de="Zum Inhalt">Skip to content</a>
@@ -16,6 +16,14 @@
 <section class="finance-intro"><div><a class="finance-back" href="work.html" data-de="Zurück zu Projekten & Demos">Back to work & demos</a><h1 data-de="Die Frage stellen.<br>Den Bericht überspringen.">Ask the question.<br>Skip the report.</h1><p data-de="Finanzdaten im Dialog erkunden. Eine Frage stellen, den Zahlen folgen und die zugrunde liegenden Daten prüfen.">Explore financial performance in a conversation. Ask a question, follow the numbers, and inspect the source.</p></div><div class="finance-demo-label"><span class="finance-demo-dot" aria-hidden="true"></span><div><strong data-de="Interaktive Agenten-Simulation">Interactive agent simulation</strong><p data-de="Fiktive USD-Daten. Berechnungen im Browser. Keine Verbindung zu einer KI oder zu Unternehmenssystemen.">Fictional USD data. Calculated in your browser. No live AI or company-system connection.</p></div></div></section>
 <noscript><p class="finance-noscript" data-de="Diese Demo benötigt JavaScript für Fragen und Berechnungen.">This demo requires JavaScript for questions and calculations.</p></noscript>
 <div id="finance-app" hidden>
+<section class="finance-guide" aria-labelledby="finance-guide-heading">
+  <div><h2 id="finance-guide-heading" data-de="Geführter Rundgang">Guided walkthrough</h2><p data-de="Von der Planabweichung bis zu den Quelldaten.">From budget gap to source rows.</p></div>
+  <ol class="finance-guide-steps">
+    <li><button type="button" data-guide-step="0" aria-current="step"><span>1</span><span data-de="Planabweichung erklären">Explain the budget gap</span></button></li>
+    <li><button type="button" data-guide-step="1"><span>2</span><span data-de="Europa genauer ansehen">Zoom in on Europe</span></button></li>
+    <li><button type="button" data-guide-step="2" disabled><span>3</span><span data-de="Quelldaten prüfen">Check the source rows</span></button></li>
+  </ol>
+</section>
 <section class="finance-dataset" aria-label="Demo dataset and scope"><div class="finance-ledger-name"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 5h16v15H4zM8 2v6M16 2v6M4 10h16M8 14h3M14 14h3M8 17h3"/></svg><div><strong data-de="Finanz-Ledger">Finance ledger</strong><span data-de="Beispieldaten · April–September 2026 · USD">Sample data · April–September 2026 · USD</span></div></div><div class="finance-scope-controls"><label for="finance-period"><span data-de="Zeitraum">Period</span><select id="finance-period"></select></label><label for="finance-region"><span data-de="Region">Region</span><select id="finance-region"></select></label><button type="button" id="finance-reset" class="finance-quiet" data-de="Neu beginnen">Start over</button></div></section>
 <div class="finance-workspace">
 <section class="finance-conversation" aria-labelledby="finance-conversation-heading"><div class="finance-conversation-heading"><h2 id="finance-conversation-heading" data-de="Die Unterhaltung">The conversation</h2><span data-de="Fragen stellen. Weiterfragen.">Ask. Explore. Follow up.</span></div>
@@ -24,7 +32,9 @@
 <div class="finance-history-heading"><h3 data-de="Fragen in dieser Sitzung">Questions in this session</h3><span id="finance-history-count"></span></div><div id="finance-history" class="finance-history"></div>
 <p class="finance-session-note" data-de="Fragen werden nicht gespeichert oder an einen Server gesendet. Ein Neuladen setzt die Unterhaltung zurück.">Questions are not saved or sent to a server. Reloading clears the conversation.</p>
 </section>
-<section class="finance-answer" aria-labelledby="finance-answer-heading" tabindex="-1"><div class="finance-answer-top"><span class="finance-answer-label" data-de="Antwort mit Datengrundlage">An answer you can trace</span><span id="finance-answer-scope"></span></div><div id="finance-answer-body"></div><div id="finance-followups" class="finance-followups"></div>
+<section class="finance-answer" aria-labelledby="finance-answer-heading" tabindex="-1"><div class="finance-answer-top"><span class="finance-answer-label" data-de="Antwort mit Datengrundlage">An answer you can trace</span><span id="finance-answer-scope"></span></div><div id="finance-answer-body"></div>
+<div class="finance-guide-action" id="finance-guide-action" hidden><button class="button" type="button" id="finance-guide-next"></button></div>
+<div id="finance-followups" class="finance-followups"></div>
 <div class="finance-answer-actions"><button class="finance-quiet" type="button" id="finance-export-answer" data-de="Antwort herunterladen">Download answer</button><button class="finance-quiet" type="button" id="finance-open-source" data-de="Quelldaten prüfen">Inspect source data</button></div>
 </section>
 </div>
