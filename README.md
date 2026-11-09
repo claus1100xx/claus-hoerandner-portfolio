@@ -27,3 +27,11 @@ python -m http.server 8766
 ```
 
 The close command center uses fictional data and stores demo changes in the visitor's browser.
+
+## Conversational finance demo
+
+`finance-demo.html` is a bilingual, deterministic agent simulation, not a live LLM. `finance-demo-data.js` contains an explicitly fictional USD ledger for April–September 2026. `finance-demo-engine.js` plans supported financial questions and calculates totals; `finance-demo.js` renders the conversation, charts, source rows and downloads. Questions stay in page memory and are never submitted to a server.
+
+Supported topics: actual versus budget, operating-profit variance contributions, revenue, expenses, margins, regions, six-month trends, previous-month comparisons and source rows. Missing periods, currencies, forecasts, balance sheets and transaction details receive scope messages. No API keys or employer data are used. Keep the simulation disclosure visible.
+
+Run the relevant checks with `node tools/test-finance-engine.cjs` and the browser smoke test documented in that file. The public demo runs without a build step.

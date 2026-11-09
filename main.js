@@ -8,8 +8,8 @@
     translatable.forEach(el => { el.innerHTML = el.dataset[lang]; });
     buttons.forEach(button => {
       const flag = document.createElement('img');
-      flag.src = lang === 'en' ? 'logos/flag-de.svg' : 'logos/flag-us.svg';
-      flag.alt = ''; flag.width = 18; flag.height = 12;
+      flag.src = lang === 'en' ? 'logos/flag-de-at.svg' : 'logos/flag-us-uk.svg';
+      flag.alt = ''; flag.width = 24; flag.height = 16;
       const label = document.createElement('span');
       label.textContent = lang === 'en' ? 'DE' : 'EN';
       button.replaceChildren(flag, label);
